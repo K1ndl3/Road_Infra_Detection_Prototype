@@ -26,14 +26,14 @@ function App() {
     try {
       setLoading(true)
       const response = await fetch(BASE_URL+"video", {
-        method:"GET",
+        method:"POST",
         body: videoData
       })
       if (!response.ok) {
         throw new Error("eruh") 
       }
 
-      const data = await response.data
+      const data = await response.json()
       setLoading(false)
       setInferenceData(data)
       console.log("data fetched very good")
@@ -49,7 +49,7 @@ function App() {
       <VidInput setVideoFile={setVideoFile}></VidInput>
       <button
         onClick={handleOnClick}>Touch me</button>
-      {loading ? <h1>notin...</h1> : <h1>[Insert data component here]</h1> }
+      {loading ? <h1>loading...</h1> : <h1></h1> }
     </>
   )
 }

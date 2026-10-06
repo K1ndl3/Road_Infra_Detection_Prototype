@@ -58,6 +58,7 @@ def showBoundBox(frame, result, index):
         cv2.rectangle(frame,[x_start,y_start],[x_end,y_end],color,1)
         cv2.putText(frame, f"Type: {label} {confidence_level}",[x_start,y_end], 0, .6,(0,0,0),2)
     cv2.imwrite(f"./output/frame_{index}.jpg", frame)
+    return frame
 
 """
 pipeline:
@@ -77,45 +78,48 @@ pipeline:
     5) display model
         - display average
 """
+def run_pipeline(source):
+    os.makedirs("./output", exist_ok=True)
 
-#1 video ingest
-capture = cv2.VideoCapture("./pothole2.webm")
-if (capture.isOpened() == False):
-    print("failed to open")
-print("video loaded succesfully")
+    #1 video ingest
+    capture = cv2.VideoCapture(source)
+    if (capture.isOpened() == False):
+        print("failed to open")
+        return []
+    print("video loaded succesfully")
 
-#2 frame capture
-frames = []
-for i in range(0,60,1):
-    success, frame = capture.read()
+    #2 frame capture
+    frames = []
+    for i in range(0,60,1):
+        success, frame = capture.read()
 
-    if not success:
-        break;
-    frames.append(frame)
-capture.release()
+        if not success:
+            break
+        frames.append(frame)
+    capture.release()
 
+    #3 load model
+    model = YOLO("yolo26n.pt")
 
-#3 load model
-model = YOLO("yolo26n.pt")
+    client = InferenceHTTPClient(
+        api_url="https://serverless.roboflow.com",
+        api_key= api
+    )
+    annotated = []
+    i = 0
+    for frame in frames:
+        result = client.infer(
+            frame,
+            model_id="pothole-detection-i00zy-qvchi-qllyn/1"
+        )
+        copy_frame = frame.copy()
+        annotated_frame = showBoundBox(copy_frame, result, i)
+        printResult(result, i)
+        annotated.append(annotated_frame)
+        i = i + 1
 
-client = InferenceHTTPClient(
-    api_url="https://serverless.roboflow.com",
-    api_key= api
-)
-results = []
-i = 0
-for frame in frames:
-    result = client.infer(
-    frame,
-    model_id="pothole-detection-i00zy-qvchi-qllyn/1"
-)
-    copy_frame = frame.copy()
-    showBoundBox(copy_frame, result, i)
-    printResult(result, i)
-    i = i + 1
-    results.append(result)
-
-
-
+    return annotated
 
 
+if __name__ == "__main__":
+    run_pipeline("./pothole2.webm")
