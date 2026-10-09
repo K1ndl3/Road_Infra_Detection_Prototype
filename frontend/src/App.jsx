@@ -40,7 +40,7 @@ function App() {
   return (
     <>
       <VidInput setVideoFile={setVideoFile}></VidInput>
-      <button onClick={handleOnClick}>Touch me</button>
+      <button onClick={handleOnClick}>Enter</button>
       {loading ? <h1>loading...</h1> : null}
       <FrameCards frames={inferenceData?.frames} />
     </>

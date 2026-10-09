@@ -8,7 +8,7 @@ function VidInput({setVideoFile}) {
 
     return (<>
         <div className="video-input-container">
-            <h1>Gimme video cuzzo</h1>
+            <h1>two pipelines in app.py. One trained on kaggle with 50 epochs, the losses are in the notebook. The other is an API call to roboflow</h1>
             <input type="file"
                 accept="video/*"
                 onChange={handleOnChange} />
