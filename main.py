@@ -55,7 +55,7 @@ def showBoundBox(frame, result, index):
         else:
             color = [0,255,0]
 
-        cv2.rectangle(frame,[x_start,y_start],[x_end,y_end],color,1)
+        cv2.rectangle(frame,[x_start,y_start],[x_end,y_end],color,2)
         cv2.putText(frame, f"Type: {label} {confidence_level}",[x_start,y_end], 0, .6,(0,0,0),2)
     cv2.imwrite(f"./output/frame_{index}.jpg", frame)
     return frame
@@ -90,7 +90,7 @@ def run_pipeline(source):
 
     #2 frame capture
     frames = []
-    for i in range(0,60,1):
+    for i in range(0,30,1):
         success, frame = capture.read()
 
         if not success:
@@ -99,7 +99,6 @@ def run_pipeline(source):
     capture.release()
 
     #3 load model
-    model = YOLO("yolo26n.pt")
 
     client = InferenceHTTPClient(
         api_url="https://serverless.roboflow.com",
