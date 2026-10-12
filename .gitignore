@@ -20,7 +20,7 @@ build/
 # ML / data artifacts
 runs/
 weights/
-*.pt
+
 *.pth
 *.onnx
 data/raw/
